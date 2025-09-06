@@ -1,5 +1,5 @@
--- Roblox Islands Script - Minimal Test Version
--- This is a minimal version to test if UI can be created
+-- Roblox Islands Script - UI Toggle Test Version
+-- Adding toggle functionality to the working UI
 
 wait(1) -- Wait a moment for the game to load
 
@@ -23,7 +23,7 @@ frame.Parent = gui
 local title = Instance.new("TextLabel")
 title.Size = UDim2.new(1, 0, 0, 30)
 title.BackgroundTransparency = 1
-title.Text = "Test UI Loaded"
+title.Text = "Toggle Test UI"
 title.TextColor3 = Color3.fromRGB(255, 255, 255)
 title.Font = Enum.Font.SourceSansBold
 title.TextSize = 16
@@ -33,10 +33,22 @@ local status = Instance.new("TextLabel")
 status.Size = UDim2.new(1, 0, 0, 30)
 status.Position = UDim2.new(0, 0, 0, 40)
 status.BackgroundTransparency = 1
-status.Text = "If you see this, UI works!"
+status.Text = "Press 'G' to toggle"
 status.TextColor3 = Color3.fromRGB(255, 255, 255)
 status.TextSize = 14
 status.Font = Enum.Font.SourceSans
 status.Parent = frame
 
-print("[Test Script] UI should be visible now")
+-- Toggle functionality
+local enabled = true
+
+mouse.KeyDown:Connect(function(key)
+    if key:lower() == "g" then
+        enabled = not enabled
+        frame.Visible = enabled
+        status.Text = enabled and "UI Enabled - Press 'G' to toggle" or "UI Disabled - Press 'G' to toggle"
+        print("[Test Script] UI " .. (enabled and "enabled" or "disabled"))
+    end
+end)
+
+print("[Test Script] Toggle UI loaded. Press 'G' to toggle visibility.")
