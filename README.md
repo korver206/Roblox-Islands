@@ -1,12 +1,13 @@
-# Islands Comprehensive Script
+# Islands Comprehensive Script v2.1
 
-A Roblox script for duplicating items and adding coins in Islands game with comprehensive remote event detection.
+A Roblox script for duplicating items and adding coins in Islands game with comprehensive remote event detection and caching.
 
 ## Features
 
 - Duplicate items with server-side persistence
 - Add coins/coins/money to your account
 - Comprehensive remote event detection in multiple locations
+- Caching of found events for better performance
 - Debug mode for troubleshooting
 - Scan functions to identify game-specific elements
 
@@ -38,6 +39,13 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/yourusername/IslandsS
 - Use "Scan All for Remotes" to find remote events in the game
 - Use "Scan for Coins" to identify coin locations
 
+## How It Works
+
+1. **First Run**: When you first click "Duplicate Item" or "Add Coins", the script searches for the appropriate remote events
+2. **Caching**: Once found, the script caches these events for faster subsequent use
+3. **Scanning**: If you're having trouble, use the "Scan All for Remotes" button to see all available events
+4. **Fallback**: If no remote events are found, the script will attempt direct value modification
+
 ## Troubleshooting
 
 If the script says "No server event found":
@@ -50,3 +58,12 @@ If the script says "Coins not found":
 1. Click "Scan for Coins" to identify all possible coin locations
 2. Check the console output for coin values
 3. The script will show you exactly where coins are stored in the game
+
+## Version History
+
+- **v2.1**: Added caching of found events, improved scan consistency, better error handling
+- **v2.0**: Initial release with comprehensive remote event detection
+
+## Notes
+
+This script is designed to work with most Roblox games that follow standard practices for item duplication and coin management. Some games may use obfuscation or custom networking that prevents this script from working.

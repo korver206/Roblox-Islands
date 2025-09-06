@@ -1,5 +1,5 @@
--- Roblox Islands Comprehensive Script v2.0
--- Enhanced solution for finding remote events in any location
+-- Roblox Islands Comprehensive Script v2.1
+-- Fixed version with consistent remote event searching
 -- Compatible with Vega X
 -- Toggle UI with 'G' key
 
@@ -29,7 +29,7 @@ frame.Visible = enabled
 local title = Instance.new("TextLabel")
 title.Size = UDim2.new(1, 0, 0, 30)
 title.BackgroundTransparency = 1
-title.Text = "Islands Comprehensive Script v2.0"
+title.Text = "Islands Script v2.1"
 title.TextColor3 = Color3.fromRGB(255, 255, 255)
 title.TextStrokeTransparency = 0.5
 title.Font = Enum.Font.SourceSansBold
@@ -98,6 +98,11 @@ status.TextSize = 14
 status.TextWrapped = true
 status.Font = Enum.Font.SourceSans
 status.Parent = frame
+
+-- Storage for found remotes
+local foundDupEvent = nil
+local foundCoinEvent = nil
+local foundCoinsValue = nil
 
 -- Helper Functions
 local function updateStatus(text)
@@ -268,6 +273,29 @@ local function scanAllForRemotes()
         end
     end
     
+    -- Also do recursive search in ReplicatedStorage
+    local function searchRecursively(instance)
+        if not instance then return {} end
+        
+        local remotes = {}
+        for _, child in ipairs(instance:GetChildren()) do
+            if child:IsA("RemoteEvent") or child:IsA("RemoteFunction") then
+                table.insert(remotes, {name = child.Name, type = child.ClassName, container = instance.Name})
+            elseif child:IsA("Folder") or child:IsA("Model") then
+                local childRemotes = searchRecursively(child)
+                for _, remote in ipairs(childRemotes) do
+                    table.insert(remotes, remote)
+                end
+            end
+        end
+        return remotes
+    end
+    
+    local recursiveRemotes = searchRecursively(replicatedStorage)
+    for _, remote in ipairs(recursiveRemotes) do
+        table.insert(allRemotes, remote)
+    end
+    
     if #allRemotes > 0 then
         updateStatus("Found "..#allRemotes.." remotes. Check console for details.")
         print("[Islands Script] Remote Events/Functions Found:")
@@ -275,6 +303,34 @@ local function scanAllForRemotes()
             print("  "..i..". "..remote.name.." ("..remote.type..") in "..remote.container)
         end
         print("[Islands Script] Look for names related to 'Duplicate', 'Clone', 'Item', 'Coin', 'Add', 'Give'")
+        
+        -- Try to identify the most likely duplication and coin events
+        local dupEvents = {}
+        local coinEvents = {}
+        
+        for _, remote in ipairs(allRemotes) do
+            local name = remote.name:lower()
+            if name:find("dup") or name:find("clone") or name:find("item") or name:find("tool") or name:find("create") or name:find("make") or name:find("spawn") then
+                table.insert(dupEvents, remote)
+            end
+            if name:find("coin") or name:find("money") or name:find("currency") or name:find("balance") or name:find("add") or name:find("give") then
+                table.insert(coinEvents, remote)
+            end
+        end
+        
+        if #dupEvents > 0 then
+            print("[Islands Script] Potential Duplication Events:")
+            for i, event in ipairs(dupEvents) do
+                print("  "..i..". "..event.name.." ("..event.type..") in "..event.container)
+            end
+        end
+        
+        if #coinEvents > 0 then
+            print("[Islands Script] Potential Coin Events:")
+            for i, event in ipairs(coinEvents) do
+                print("  "..i..". "..event.name.." ("..event.type..") in "..event.container)
+            end
+        end
     else
         updateStatus("No remotes found in any location.")
         print("[Islands Script] No Remote Events/Functions found in common locations.")
@@ -314,6 +370,31 @@ local function duplicateItem()
     if tool then
         updateStatus("Attempting to duplicate "..tool.Name.."...")
         
+        -- If we already found a duplication event, use it
+        if foundDupEvent then
+            if foundDupEvent:IsA("RemoteEvent") then
+                foundDupEvent:FireServer(tool)
+                updateStatus("SUCCESS! Duplicated "..tool.Name.." using cached event (RemoteEvent)")
+                if debugMode then
+                    print("[Islands Script] Used cached RemoteEvent")
+                end
+                return
+            else
+                local success, result = pcall(function() return foundDupEvent:InvokeServer(tool) end)
+                if success then
+                    updateStatus("SUCCESS! Duplicated "..tool.Name.." using cached event (RemoteFunction)")
+                    if debugMode then
+                        print("[Islands Script] Used cached RemoteFunction")
+                    end
+                    return
+                else
+                    updateStatus("Cached RemoteFunction failed. Error: "..tostring(result))
+                    -- Clear the cached event and try to find a new one
+                    foundDupEvent = nil
+                end
+            end
+        end
+        
         -- Comprehensive list of possible duplication remote event names
         local dupEventNames = {
             -- Common variations
@@ -341,6 +422,7 @@ local function duplicateItem()
         local dupEvent, eventName, containerName = findRemoteEvent(dupEventNames)
         
         if dupEvent then
+            foundDupEvent = dupEvent -- Cache the found event
             if dupEvent:IsA("RemoteEvent") then
                 dupEvent:FireServer(tool)
                 updateStatus("SUCCESS! Duplicated "..tool.Name.." using "..eventName.." (RemoteEvent)")
@@ -374,10 +456,48 @@ end
 
 local function addCoins()
     updateStatus("Searching for coins...")
+    
+    -- If we already found coins value, use it
+    if foundCoinsValue then
+        local oldValue = foundCoinsValue.Value
+        foundCoinsValue.Value = oldValue + 10000
+        updateStatus("Added 10k coins directly using cached value.")
+        if debugMode then
+            print("[Islands Script] Used cached coin value")
+        end
+        return
+    end
+    
     local coinsValue, path = findCoinsValue()
     
     if coinsValue then
+        foundCoinsValue = coinsValue -- Cache the found value
         updateStatus("Found coins at: "..path..". Adding 10000...")
+        
+        -- If we already found a coin event, try to use it first
+        if foundCoinEvent then
+            if foundCoinEvent:IsA("RemoteEvent") then
+                foundCoinEvent:FireServer(10000)
+                updateStatus("SUCCESS! Added 10k coins using cached event (RemoteEvent)")
+                if debugMode then
+                    print("[Islands Script] Used cached coin RemoteEvent")
+                end
+                return
+            else
+                local success, result = pcall(function() return foundCoinEvent:InvokeServer(10000) end)
+                if success then
+                    updateStatus("SUCCESS! Added 10k coins using cached event (RemoteFunction)")
+                    if debugMode then
+                        print("[Islands Script] Used cached coin RemoteFunction")
+                    end
+                    return
+                else
+                    updateStatus("Cached coin RemoteFunction failed. Error: "..tostring(result))
+                    -- Clear the cached event and try to find a new one
+                    foundCoinEvent = nil
+                end
+            end
+        end
         
         -- Comprehensive list of possible coin remote event names
         local coinEventNames = {
@@ -404,6 +524,7 @@ local function addCoins()
         local coinEvent, eventName, containerName = findRemoteEvent(coinEventNames)
         
         if coinEvent then
+            foundCoinEvent = coinEvent -- Cache the found event
             if coinEvent:IsA("RemoteEvent") then
                 coinEvent:FireServer(10000)
                 updateStatus("SUCCESS! Added 10k coins using "..eventName.." (RemoteEvent)")
@@ -478,3 +599,4 @@ end)
 -- Initialize
 updateStatus("Script Loaded Successfully\nHold an item and click Duplicate\nUse Scan buttons for troubleshooting")
 print("[Islands Script] Script initialized. Toggle UI with 'G' key.")
+print("[Islands Script] FIXED VERSION 2.1 - Now caches found events for better performance")
