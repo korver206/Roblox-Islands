@@ -1,5 +1,5 @@
--- Roblox Islands Comprehensive Script v2.1
--- Fixed version with consistent remote event searching
+-- Roblox Islands Comprehensive Script v3.0
+-- Enhanced version with item scanning and categorized UI
 -- Compatible with Vega X
 -- Toggle UI with 'G' key
 
@@ -16,8 +16,8 @@ gui.Name = "IslandsUI"
 gui.Parent = game.CoreGui
 
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 320, 0, 340)
-frame.Position = UDim2.new(0.5, -160, 0.5, -170)
+frame.Size = UDim2.new(0, 400, 0, 300)
+frame.Position = UDim2.new(0.5, -200, 0.5, -150)
 frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 frame.BorderSizePixel = 2
 frame.BorderColor3 = Color3.fromRGB(70, 70, 70)
@@ -29,7 +29,7 @@ frame.Visible = enabled
 local title = Instance.new("TextLabel")
 title.Size = UDim2.new(1, 0, 0, 30)
 title.BackgroundTransparency = 1
-title.Text = "Islands Script v2.1"
+title.Text = "Islands Script v3.0"
 title.TextColor3 = Color3.fromRGB(255, 255, 255)
 title.TextStrokeTransparency = 0.5
 title.Font = Enum.Font.SourceSansBold
@@ -37,9 +37,9 @@ title.TextSize = 16
 title.Parent = frame
 
 local dupBtn = Instance.new("TextButton")
-dupBtn.Size = UDim2.new(0, 300, 0, 35)
-dupBtn.Position = UDim2.new(0, 10, 0, 40)
-dupBtn.Text = "Duplicate Item"
+dupBtn.Size = UDim2.new(0, 190, 0, 35)
+dupBtn.Position = UDim2.new(0, 5, 0, 40)
+dupBtn.Text = "Duplicate Held Item"
 dupBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 dupBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 180)
 dupBtn.BorderSizePixel = 1
@@ -47,8 +47,8 @@ dupBtn.BorderColor3 = Color3.fromRGB(100, 100, 220)
 dupBtn.Parent = frame
 
 local coinBtn = Instance.new("TextButton")
-coinBtn.Size = UDim2.new(0, 300, 0, 35)
-coinBtn.Position = UDim2.new(0, 10, 0, 85)
+coinBtn.Size = UDim2.new(0, 190, 0, 35)
+coinBtn.Position = UDim2.new(0, 205, 0, 40)
 coinBtn.Text = "Add Coins"
 coinBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 coinBtn.BackgroundColor3 = Color3.fromRGB(60, 180, 60)
@@ -57,8 +57,8 @@ coinBtn.BorderColor3 = Color3.fromRGB(100, 220, 100)
 coinBtn.Parent = frame
 
 local debugBtn = Instance.new("TextButton")
-debugBtn.Size = UDim2.new(0, 300, 0, 35)
-debugBtn.Position = UDim2.new(0, 10, 0, 130)
+debugBtn.Size = UDim2.new(0, 190, 0, 35)
+debugBtn.Position = UDim2.new(0, 5, 0, 80)
 debugBtn.Text = "Toggle Debug Mode"
 debugBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 debugBtn.BackgroundColor3 = Color3.fromRGB(180, 60, 60)
@@ -67,30 +67,40 @@ debugBtn.BorderColor3 = Color3.fromRGB(220, 100, 100)
 debugBtn.Parent = frame
 
 local scanBtn = Instance.new("TextButton")
-scanBtn.Size = UDim2.new(0, 300, 0, 35)
-scanBtn.Position = UDim2.new(0, 10, 0, 175)
-scanBtn.Text = "Scan All for Remotes"
+scanBtn.Size = UDim2.new(0, 190, 0, 35)
+scanBtn.Position = UDim2.new(0, 205, 0, 80)
+scanBtn.Text = "Scan All Remotes"
 scanBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 scanBtn.BackgroundColor3 = Color3.fromRGB(180, 180, 60)
 scanBtn.BorderSizePixel = 1
 scanBtn.BorderColor3 = Color3.fromRGB(220, 220, 100)
 scanBtn.Parent = frame
 
-local scanCoinsBtn = Instance.new("TextButton")
-scanCoinsBtn.Size = UDim2.new(0, 300, 0, 35)
-scanCoinsBtn.Position = UDim2.new(0, 10, 0, 220)
-scanCoinsBtn.Text = "Scan for Coins"
-scanCoinsBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-scanCoinsBtn.BackgroundColor3 = Color3.fromRGB(180, 90, 180)
-scanCoinsBtn.BorderSizePixel = 1
-scanCoinsBtn.BorderColor3 = Color3.fromRGB(220, 150, 220)
-scanCoinsBtn.Parent = frame
+local scanItemsBtn = Instance.new("TextButton")
+scanItemsBtn.Size = UDim2.new(0, 190, 0, 35)
+scanItemsBtn.Position = UDim2.new(0, 5, 0, 120)
+scanItemsBtn.Text = "Scan Game Items"
+scanItemsBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+scanItemsBtn.BackgroundColor3 = Color3.fromRGB(180, 90, 180)
+scanItemsBtn.BorderSizePixel = 1
+scanItemsBtn.BorderColor3 = Color3.fromRGB(220, 150, 220)
+scanItemsBtn.Parent = frame
+
+local clearCacheBtn = Instance.new("TextButton")
+clearCacheBtn.Size = UDim2.new(0, 190, 0, 35)
+clearCacheBtn.Position = UDim2.new(0, 205, 0, 120)
+clearCacheBtn.Text = "Clear Event Cache"
+clearCacheBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+clearCacheBtn.BackgroundColor3 = Color3.fromRGB(90, 90, 90)
+clearCacheBtn.BorderSizePixel = 1
+clearCacheBtn.BorderColor3 = Color3.fromRGB(130, 130, 130)
+clearCacheBtn.Parent = frame
 
 local status = Instance.new("TextLabel")
-status.Size = UDim2.new(1, 0, 0, 60)
-status.Position = UDim2.new(0, 0, 0, 270)
+status.Size = UDim2.new(1, 0, 0, 100)
+status.Position = UDim2.new(0, 0, 0, 160)
 status.BackgroundTransparency = 1
-status.Text = "Status: Ready\nHold an item to duplicate"
+status.Text = "Status: Ready\nHold an item and click Duplicate\nUse Scan buttons for troubleshooting"
 status.TextColor3 = Color3.fromRGB(255, 255, 255)
 status.TextStrokeTransparency = 0.7
 status.TextScaled = false
@@ -99,10 +109,11 @@ status.TextWrapped = true
 status.Font = Enum.Font.SourceSans
 status.Parent = frame
 
--- Storage for found remotes
+-- Storage for found remotes and items
 local foundDupEvent = nil
 local foundCoinEvent = nil
 local foundCoinsValue = nil
+local gameItems = {}
 
 -- Helper Functions
 local function updateStatus(text)
@@ -297,12 +308,7 @@ local function scanAllForRemotes()
     end
     
     if #allRemotes > 0 then
-        updateStatus("Found "..#allRemotes.." remotes. Check console for details.")
-        print("[Islands Script] Remote Events/Functions Found:")
-        for i, remote in ipairs(allRemotes) do
-            print("  "..i..". "..remote.name.." ("..remote.type..") in "..remote.container)
-        end
-        print("[Islands Script] Look for names related to 'Duplicate', 'Clone', 'Item', 'Coin', 'Add', 'Give'")
+        updateStatus("Found "..#allRemotes.." remotes. Displaying potential dup/coin events below.")
         
         -- Try to identify the most likely duplication and coin events
         local dupEvents = {}
@@ -318,48 +324,242 @@ local function scanAllForRemotes()
             end
         end
         
+        local displayText = "Found "..#allRemotes.." remotes total.\n"
+        
         if #dupEvents > 0 then
-            print("[Islands Script] Potential Duplication Events:")
+            displayText = displayText.."Dup events ("..#dupEvents.."): "
             for i, event in ipairs(dupEvents) do
-                print("  "..i..". "..event.name.." ("..event.type..") in "..event.container)
+                if i <= 3 then
+                    displayText = displayText..event.name.." "
+                end
             end
+            if #dupEvents > 3 then
+                displayText = displayText.."and "..(#dupEvents-3).." more..."
+            end
+            displayText = displayText.."\n"
         end
         
         if #coinEvents > 0 then
-            print("[Islands Script] Potential Coin Events:")
+            displayText = displayText.."Coin events ("..#coinEvents.."): "
             for i, event in ipairs(coinEvents) do
-                print("  "..i..". "..event.name.." ("..event.type..") in "..event.container)
+                if i <= 3 then
+                    displayText = displayText..event.name.." "
+                end
+            end
+            if #coinEvents > 3 then
+                displayText = displayText.."and "..(#coinEvents-3).." more..."
             end
         end
+        
+        if #dupEvents == 0 and #coinEvents == 0 then
+            displayText = displayText.."No obvious dup/coin events found. Check all remotes manually."
+        end
+        
+        updateStatus(displayText)
     else
         updateStatus("No remotes found in any location.")
-        print("[Islands Script] No Remote Events/Functions found in common locations.")
-        print("[Islands Script] The game may use obfuscation or custom structures.")
     end
 end
 
 local function scanForCoins()
     updateStatus("Scanning for coin values...")
-    print("[Islands Script] Player children:")
+    
+    local displayText = "Player children:\n"
+    local count = 0
     for i, child in ipairs(player:GetChildren()) do
-        print("  "..i..". "..child.Name.." ("..child.ClassName..")")
+        if count < 5 then
+            displayText = displayText..i..". "..child.Name.." ("..child.ClassName..")\n"
+            count = count + 1
+        end
     end
     
     if player:FindFirstChild("leaderstats") then
-        print("[Islands Script] Leaderstats children:")
+        displayText = displayText.."Leaderstats children:\n"
+        count = 0
         for i, child in ipairs(player.leaderstats:GetChildren()) do
-            print("  "..i..". "..child.Name.." ("..child.ClassName..")")
+            if count < 5 then
+                displayText = displayText..i..". "..child.Name.." ("..child.ClassName..")\n"
+                count = count + 1
+            end
         end
     end
     
     if player:FindFirstChild("data") then
-        print("[Islands Script] Data children:")
+        displayText = displayText.."Data children:\n"
+        count = 0
         for i, child in ipairs(player.data:GetChildren()) do
-            print("  "..i..". "..child.Name.." ("..child.ClassName..")")
+            if count < 5 then
+                displayText = displayText..i..". "..child.Name.." ("..child.ClassName..")\n"
+                count = count + 1
+            end
         end
     end
     
-    updateStatus("Coin scan complete. Check console for details.")
+    updateStatus(displayText)
+end
+
+local function scanGameItems()
+    updateStatus("Scanning game for items...")
+    gameItems = {}
+    
+    -- Search in ReplicatedStorage for items
+    local function searchForItems(instance, depth)
+        if depth > 3 then return end -- Limit recursion depth
+        
+        for _, child in ipairs(instance:GetChildren()) do
+            if child:IsA("Tool") or child:IsA("Model") then
+                table.insert(gameItems, child)
+            end
+            
+            if child:IsA("Folder") or child:IsA("Model") then
+                searchForItems(child, depth + 1)
+            end
+        end
+    end
+    
+    searchForItems(replicatedStorage, 0)
+    
+    updateStatus("Found "..#gameItems.." items in game. Use item browser for selection.")
+    print("[Islands Script] Found "..#gameItems.." items in game")
+    
+    -- Create item browser UI
+    createItemBrowser()
+end
+
+local function createItemBrowser()
+    -- Clear existing browser if it exists
+    if frame:FindFirstChild("ItemBrowser") then
+        frame.ItemBrowser:Destroy()
+    end
+    
+    local browserFrame = Instance.new("Frame")
+    browserFrame.Name = "ItemBrowser"
+    browserFrame.Size = UDim2.new(0, 380, 0, 200)
+    browserFrame.Position = UDim2.new(0, 10, 0, 160)
+    browserFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    browserFrame.BorderSizePixel = 1
+    browserFrame.BorderColor3 = Color3.fromRGB(100, 100, 100)
+    browserFrame.Parent = frame
+    
+    local browserTitle = Instance.new("TextLabel")
+    browserTitle.Size = UDim2.new(1, 0, 0, 20)
+    browserTitle.Position = UDim2.new(0, 0, 0, 0)
+    browserTitle.BackgroundTransparency = 1
+    browserTitle.Text = "Game Items Browser ("..#gameItems.." found)"
+    browserTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+    browserTitle.Font = Enum.Font.SourceSansBold
+    browserTitle.TextSize = 14
+    browserTitle.Parent = browserFrame
+    
+    local listFrame = Instance.new("ScrollingFrame")
+    listFrame.Size = UDim2.new(1, -10, 1, -60)
+    listFrame.Position = UDim2.new(0, 5, 0, 25)
+    listFrame.BackgroundTransparency = 0.8
+    listFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    listFrame.BorderSizePixel = 1
+    listFrame.BorderColor3 = Color3.fromRGB(120, 120, 120)
+    listFrame.CanvasSize = UDim2.new(0, 0, 0, #gameItems * 25)
+    listFrame.ScrollBarThickness = 8
+    listFrame.Parent = browserFrame
+    
+    local amountBox = Instance.new("TextBox")
+    amountBox.Size = UDim2.new(0, 100, 0, 30)
+    amountBox.Position = UDim2.new(0, 5, 1, -30)
+    amountBox.BackgroundTransparency = 0
+    amountBox.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    amountBox.BorderSizePixel = 1
+    amountBox.BorderColor3 = Color3.fromRGB(120, 120, 120)
+    amountBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+    amountBox.Text = "1"
+    amountBox.PlaceholderText = "Amount"
+    amountBox.Parent = browserFrame
+    
+    -- Create item buttons
+    for i, item in ipairs(gameItems) do
+        local itemBtn = Instance.new("TextButton")
+        itemBtn.Size = UDim2.new(1, -10, 0, 20)
+        itemBtn.Position = UDim2.new(0, 5, 0, (i-1) * 25)
+        itemBtn.Text = item.Name
+        itemBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        itemBtn.BackgroundTransparency = 0.7
+        itemBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+        itemBtn.BorderSizePixel = 0
+        itemBtn.Parent = listFrame
+        
+        itemBtn.MouseButton1Click:Connect(function()
+            local amount = tonumber(amountBox.Text) or 1
+            giveItem(item, amount)
+        end)
+    end
+end
+
+local function giveItem(item, amount)
+    if not item then
+        updateStatus("No item selected")
+        return
+    end
+    
+    -- Try to find duplication remote
+    if foundDupEvent then
+        if foundDupEvent:IsA("RemoteEvent") then
+            foundDupEvent:FireServer(item, amount)
+            updateStatus("Gave "..amount.."x "..item.Name.." using cached event")
+            return
+        else
+            local success, result = pcall(function() return foundDupEvent:InvokeServer(item, amount) end)
+            if success then
+                updateStatus("Gave "..amount.."x "..item.Name.." using cached event")
+                return
+            else
+                updateStatus("Cached RemoteFunction failed. Clearing cache.")
+                foundDupEvent = nil
+            end
+        end
+    end
+    
+    -- Comprehensive list of possible duplication remote event names
+    local dupEventNames = {
+        -- Common variations
+        "DuplicateItem", "DupItem", "duplicateItem", "dupItem",
+        "CloneItem", "cloneItem", "Clone", "clone",
+        "Duplicate", "duplicate", "CopyItem", "copyItem",
+        "ReplicateItem", "replicateItem", "CreateItem", "createItem",
+        "GiveItem", "giveItem", "AddItem", "addItem",
+        
+        -- More specific variations
+        "ServerDuplicate", "ServerDup", "ItemDuplicate", "ItemDup",
+        "DuplicateTool", "DupTool", "CloneTool", "CopyTool",
+        "ReplicateTool", "CreateTool", "GiveTool", "AddTool",
+        
+        -- Game-specific possibilities
+        "Replicate", "Rep", "MakeItem", "NewItem", "SpawnItem",
+        "GenerateItem", "ProduceItem", "ForgeItem", "CraftItem",
+        
+        -- Other common names
+        "MakeTool", "SpawnTool", "CreateTool", "GenerateTool",
+        "ProduceTool", "ForgeTool", "CraftTool", "BuildItem",
+        "BuildTool", "ConstructItem", "ConstructTool",
+        "GiveTool", "GiveItem", "SpawnItem", "CreateItem"
+    }
+    
+    local dupEvent, eventName, containerName = findRemoteEvent(dupEventNames)
+    
+    if dupEvent then
+        foundDupEvent = dupEvent -- Cache the found event
+        if dupEvent:IsA("RemoteEvent") then
+            dupEvent:FireServer(item, amount)
+            updateStatus("Gave "..amount.."x "..item.Name.." using "..eventName.." (RemoteEvent)")
+        else
+            local success, result = pcall(function() return dupEvent:InvokeServer(item, amount) end)
+            if success then
+                updateStatus("Gave "..amount.."x "..item.Name.." using "..eventName.." (RemoteFunction)")
+            else
+                updateStatus("RemoteFunction failed. Error: "..tostring(result))
+            end
+        end
+    else
+        updateStatus("No server event found for giving items")
+    end
 end
 
 -- Main Functions
@@ -375,21 +575,14 @@ local function duplicateItem()
             if foundDupEvent:IsA("RemoteEvent") then
                 foundDupEvent:FireServer(tool)
                 updateStatus("SUCCESS! Duplicated "..tool.Name.." using cached event (RemoteEvent)")
-                if debugMode then
-                    print("[Islands Script] Used cached RemoteEvent")
-                end
                 return
             else
                 local success, result = pcall(function() return foundDupEvent:InvokeServer(tool) end)
                 if success then
                     updateStatus("SUCCESS! Duplicated "..tool.Name.." using cached event (RemoteFunction)")
-                    if debugMode then
-                        print("[Islands Script] Used cached RemoteFunction")
-                    end
                     return
                 else
-                    updateStatus("Cached RemoteFunction failed. Error: "..tostring(result))
-                    -- Clear the cached event and try to find a new one
+                    updateStatus("Cached RemoteFunction failed. Clearing cache.")
                     foundDupEvent = nil
                 end
             end
@@ -426,28 +619,16 @@ local function duplicateItem()
             if dupEvent:IsA("RemoteEvent") then
                 dupEvent:FireServer(tool)
                 updateStatus("SUCCESS! Duplicated "..tool.Name.." using "..eventName.." (RemoteEvent)")
-                if debugMode then
-                    print("[Islands Script] Used RemoteEvent: "..eventName.." in "..containerName)
-                end
             else
                 local success, result = pcall(function() return dupEvent:InvokeServer(tool) end)
                 if success then
                     updateStatus("SUCCESS! Duplicated "..tool.Name.." using "..eventName.." (RemoteFunction)")
-                    if debugMode then
-                        print("[Islands Script] Used RemoteFunction: "..eventName.." in "..containerName)
-                    end
                 else
                     updateStatus("RemoteFunction failed. Error: "..tostring(result))
                 end
             end
         else
             updateStatus("No server event found. Try Scan All button to search everywhere.")
-            if debugMode then
-                print("[Islands Script] Searched for these events without success:")
-                for i, name in ipairs(dupEventNames) do
-                    print("  "..i..". "..name)
-                end
-            end
         end
     else
         updateStatus("No item found. Equip or hold an item to duplicate.")
@@ -462,9 +643,6 @@ local function addCoins()
         local oldValue = foundCoinsValue.Value
         foundCoinsValue.Value = oldValue + 10000
         updateStatus("Added 10k coins directly using cached value.")
-        if debugMode then
-            print("[Islands Script] Used cached coin value")
-        end
         return
     end
     
@@ -479,21 +657,14 @@ local function addCoins()
             if foundCoinEvent:IsA("RemoteEvent") then
                 foundCoinEvent:FireServer(10000)
                 updateStatus("SUCCESS! Added 10k coins using cached event (RemoteEvent)")
-                if debugMode then
-                    print("[Islands Script] Used cached coin RemoteEvent")
-                end
                 return
             else
                 local success, result = pcall(function() return foundCoinEvent:InvokeServer(10000) end)
                 if success then
                     updateStatus("SUCCESS! Added 10k coins using cached event (RemoteFunction)")
-                    if debugMode then
-                        print("[Islands Script] Used cached coin RemoteFunction")
-                    end
                     return
                 else
-                    updateStatus("Cached coin RemoteFunction failed. Error: "..tostring(result))
-                    -- Clear the cached event and try to find a new one
+                    updateStatus("Cached coin RemoteFunction failed. Clearing cache.")
                     foundCoinEvent = nil
                 end
             end
@@ -528,16 +699,10 @@ local function addCoins()
             if coinEvent:IsA("RemoteEvent") then
                 coinEvent:FireServer(10000)
                 updateStatus("SUCCESS! Added 10k coins using "..eventName.." (RemoteEvent)")
-                if debugMode then
-                    print("[Islands Script] Used RemoteEvent: "..eventName.." in "..containerName)
-                end
             else
                 local success, result = pcall(function() return coinEvent:InvokeServer(10000) end)
                 if success then
                     updateStatus("SUCCESS! Added 10k coins using "..eventName.." (RemoteFunction)")
-                    if debugMode then
-                        print("[Islands Script] Used RemoteFunction: "..eventName.." in "..containerName)
-                    end
                 else
                     updateStatus("RemoteFunction failed. Error: "..tostring(result))
                 end
@@ -547,23 +712,9 @@ local function addCoins()
             local oldValue = coinsValue.Value
             coinsValue.Value = oldValue + 10000
             updateStatus("Added 10k coins directly. Found at: "..path)
-            if debugMode then
-                print("[Islands Script] Direct modification. Path: "..path)
-            end
         end
     else
         updateStatus("Coins not found. Try Scan Coins button to identify coin location.")
-        if debugMode then
-            print("[Islands Script] Searched these paths without success:")
-            local paths = {
-                "player.leaderstats.Coins", "player.leaderstats.coins",
-                "player.Leaderstats.Coins", "player.Leaderstats.coins",
-                "player.Coins", "player.coins", "player.Coin", "player.coin"
-            }
-            for i, path in ipairs(paths) do
-                print("  "..i..". "..path)
-            end
-        end
     end
 end
 
@@ -571,14 +722,13 @@ local function toggleDebugMode()
     debugMode = not debugMode
     updateStatus("Debug Mode "..(debugMode and "Enabled" or "Disabled"))
     debugBtn.BackgroundColor3 = debugMode and Color3.fromRGB(220, 100, 100) or Color3.fromRGB(180, 60, 60)
-    
-    if debugMode then
-        print("[Islands Script] Debug Mode Enabled")
-        print("[Islands Script] Player Name: "..player.Name)
-        print("[Islands Script] Game: "..game.Name)
-    else
-        print("[Islands Script] Debug Mode Disabled")
-    end
+end
+
+local function clearEventCache()
+    foundDupEvent = nil
+    foundCoinEvent = nil
+    foundCoinsValue = nil
+    updateStatus("Event cache cleared. Will rescan on next use.")
 end
 
 -- Connections
@@ -586,7 +736,8 @@ dupBtn.MouseButton1Click:Connect(duplicateItem)
 coinBtn.MouseButton1Click:Connect(addCoins)
 debugBtn.MouseButton1Click:Connect(toggleDebugMode)
 scanBtn.MouseButton1Click:Connect(scanAllForRemotes)
-scanCoinsBtn.MouseButton1Click:Connect(scanForCoins)
+scanItemsBtn.MouseButton1Click:Connect(scanGameItems)
+clearCacheBtn.MouseButton1Click:Connect(clearEventCache)
 
 mouse.KeyDown:Connect(function(key)
     if key:lower() == "g" then
@@ -597,6 +748,7 @@ mouse.KeyDown:Connect(function(key)
 end)
 
 -- Initialize
-updateStatus("Script Loaded Successfully\nHold an item and click Duplicate\nUse Scan buttons for troubleshooting")
-print("[Islands Script] Script initialized. Toggle UI with 'G' key.")
-print("[Islands Script] FIXED VERSION 2.1 - Now caches found events for better performance")
+updateStatus("Script v3.0 Loaded Successfully\nHold an item and click Duplicate\nUse Scan buttons for troubleshooting")
+print("[Islands Script] Script v3.0 initialized. Toggle UI with 'G' key.")
+</content>
+<line_count: 525
