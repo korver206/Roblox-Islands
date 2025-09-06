@@ -750,5 +750,3 @@ end)
 -- Initialize
 updateStatus("Script v3.0 Loaded Successfully\nHold an item and click Duplicate\nUse Scan buttons for troubleshooting")
 print("[Islands Script] Script v3.0 initialized. Toggle UI with 'G' key.")
-</content>
-<line_count: 525
